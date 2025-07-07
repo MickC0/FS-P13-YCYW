@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: ycyw-backend
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/ycyw_db
+    username: ycyw_user
+    password: ycyw_password
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+
+jwt:
+  secret: bbb0bda63b68bef09fb75a00c830c1bbfcaadbc73ededd63ad52b3be0298083a632bccff78c2cfb3e2201c26836967c046e70f53dd1960c6090e1eb5c06e70b51e39ddb5437fad8c7fa2e0a0c5a796e14dbb7704782496fcd71018ad3b803b1f3a8582b51341c2d329895e3912c36c98f1fe89c0eb16fc66efef89497581da2ef4d25d4fe4ced244e91d7c0ab5b395d29365f95131fbf2c97d3f44160a2f8b3a702006f6a64862864878417b395dcb806ebf664a169c529b018eafcf69540410c9ecd0e765551616a09288ca31ac85bd4883ab30039e59f6cf85033adfd508c6a736cef254ec41ceccc824898eeb115b766960ee7c7c1090a5dff5c632863aa3
