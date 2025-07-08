@@ -1,0 +1,15 @@
+<div class="chat-container">
+  <div class="chat-messages">
+    @for (msg of messages(); track $index) {
+      <div class="message">{{ msg }}</div>
+    }
+  </div>
+
+  <form (ngSubmit)="send()" class="chat-form">
+    <mat-form-field class="full-width">
+      <input matInput [(ngModel)]="message" name="message" placeholder="Tapez votre message..." required />
+    </mat-form-field>
+    <button mat-raised-button color="primary" type="submit">Envoyer</button>
+  </form>
+
+</div>

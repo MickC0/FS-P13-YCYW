@@ -67,13 +67,11 @@ export class LoginComponent {
       email: this.email.value!,
       password: this.password.value!
     }).subscribe({
-      next: res => {
-        this.auth.saveToken(res.token);
-        this.router.navigateByUrl('/');
-      },
+      next: () => this.router.navigateByUrl('/'),
       error: () => {
         this.snackBar.open('Identifiants invalides', 'Fermer', { duration: 3000 });
       }
     });
+
   }
 }

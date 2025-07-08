@@ -64,14 +64,27 @@ export class RegisterComponent {
 
     this.passwordError.set(this.password.hasError('required') ? 'Mot de passe requis' : '');
 
-    this.confirmError.set(this.confirmPassword.hasError('required') ? 'Confirmation requise' :
-      this.password.value !== this.confirmPassword.value ? 'Les mots de passe ne correspondent pas' : '');
+    if (this.confirmPassword.hasError('required')) {
+      this.confirmError.set('Confirmation requise');
+    } else if (this.password.value !== this.confirmPassword.value) {
+      this.confirmError.set('Les mots de passe ne correspondent pas');
+      this.confirmPassword.setErrors({ mismatch: true });
+    } else {
+      this.confirmError.set('');
+      if (this.confirmPassword.hasError('mismatch')) {
+        this.confirmPassword.setErrors(null);
+      }
+    }
 
     this.roleError.set(this.role.hasError('required') ? 'Rôle requis' : '');
-
   }
 
+
   onSubmit(): void {
+    this.email.markAsTouched();
+    this.password.markAsTouched();
+    this.confirmPassword.markAsTouched();
+    this.role.markAsTouched();
     this.updateErrorMessages();
 
     if (
@@ -91,14 +104,12 @@ export class RegisterComponent {
     };
 
     this.auth.register(request).subscribe({
-      next: res => {
-        this.auth.saveToken(res.token);
-        this.router.navigateByUrl('/');
-      },
+      next: () => this.router.navigateByUrl('/'),
       error: () => {
         this.snackbar.open('Erreur lors de l’inscription', 'Fermer', { duration: 3000 });
       }
     });
+
   }
 
 }

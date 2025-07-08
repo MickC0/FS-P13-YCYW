@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Client, IMessage, Stomp } from '@stomp/stompjs';
+import { Client, IMessage } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import { BehaviorSubject } from 'rxjs';
-import {environment} from '../../../environments/environment';
-
+import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class ChatService {
@@ -19,7 +18,7 @@ export class ChatService {
       debug: str => console.log(str),
       onConnect: () => {
         this.connected.next(true);
-        console.log('WebSocket connected');
+        console.log('✅ WebSocket (SockJS) connected');
       },
       onStompError: frame => console.error('Broker error:', frame)
     });
