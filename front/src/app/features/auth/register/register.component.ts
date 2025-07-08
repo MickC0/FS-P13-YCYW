@@ -14,7 +14,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { AuthService } from '../../../core/service/auth.service';
 import { MATERIAL_IMPORTS } from '../../../shared/material';
 import { RegisterRequest } from '../../../core/models/register-request.model';
-import {merge} from 'rxjs';
+import {debounceTime, merge} from 'rxjs';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 
 @Component({
@@ -54,7 +54,10 @@ export class RegisterComponent {
       this.confirmPassword.statusChanges,
       this.confirmPassword.valueChanges,
     )
-      .pipe(takeUntilDestroyed())
+        .pipe(
+            debounceTime(200),
+            takeUntilDestroyed()
+        )
       .subscribe(() => this.updateErrorMessages());
   }
 
@@ -68,13 +71,18 @@ export class RegisterComponent {
       this.confirmError.set('Confirmation requise');
     } else if (this.password.value !== this.confirmPassword.value) {
       this.confirmError.set('Les mots de passe ne correspondent pas');
-      this.confirmPassword.setErrors({ mismatch: true });
+      if (!this.confirmPassword.hasError('mismatch')) {
+        this.confirmPassword.setErrors({ mismatch: true });
+      }
     } else {
       this.confirmError.set('');
       if (this.confirmPassword.hasError('mismatch')) {
-        this.confirmPassword.setErrors(null);
+        const errors = { ...this.confirmPassword.errors };
+        delete errors['mismatch'];
+        this.confirmPassword.setErrors(Object.keys(errors).length ? errors : null);
       }
     }
+
 
     this.roleError.set(this.role.hasError('required') ? 'Rôle requis' : '');
   }

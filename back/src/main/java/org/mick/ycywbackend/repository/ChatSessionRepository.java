@@ -11,7 +11,5 @@ public interface ChatSessionRepository extends JpaRepository<ChatSession, Long> 
 
     List<ChatSession> findByStatus(ChatStatus status);
 
-    List<ChatSession> findByClientId(Long clientId);
 
-    List<ChatSession> findBySavUserId(Long savUserId);
 }

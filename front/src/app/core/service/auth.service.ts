@@ -1,9 +1,10 @@
-import { Injectable, signal } from '@angular/core';
+import {inject, Injectable, signal} from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, map, tap } from 'rxjs';
 import { AuthResponse } from '../models/auth-response.model';
 import { RegisterRequest } from '../models/register-request.model';
 import { environment } from '../../../environments/environment';
+import {ChatService} from "./chat.service";
 
 @Injectable({
   providedIn: 'root'
@@ -19,9 +20,8 @@ export class AuthService {
   readonly email = this._email.asReadonly();
   private readonly _role = signal<string | null>(this.getRoleFromToken());
   readonly role = this._role.asReadonly();
-
-
-  constructor(private http: HttpClient) {}
+  private http = inject(HttpClient);
+    private chatService = inject(ChatService);
 
   login(credentials: { email: string; password: string }): Observable<void> {
     return this.http.post<AuthResponse>(`${this.API}/login`, credentials).pipe(
@@ -51,6 +51,8 @@ export class AuthService {
     localStorage.removeItem(this.TOKEN_KEY);
     this._isLogged.set(false);
     this._email.set(null);
+    this._role.set(null);
+    this.chatService.disconnect();
   }
 
   getToken(): string | null {

@@ -1,33 +1,46 @@
-<ng-container>
-  @if (isClient()) {
-    @if (!activeSession()) {
-      <button mat-raised-button color="primary" (click)="startSession()">
-        Lancer un chat
-      </button>
-    } @else {
-      <h3>Session active (ID: {{ activeSession()?.id }})</h3>
-      <app-chat [sessionId]="activeSession()!.id" [senderRole]="'CLIENT'"></app-chat>
-    }
-  }
+@if (isLogged()) {
+    <ng-container>
 
-  <!-- SAV VIEW -->
-  @if (isSav()) {
-    <h3>Chats en attente</h3>
-
-    @if (sessions().length > 0) {
-      <mat-list>
-        @for (session of sessions(); track session.id) {
-          <mat-list-item>
-            <span>Session #{{ session.id }}</span>
-            <button mat-button (click)="takeSession(session.id)">Prendre</button>
-          </mat-list-item>
+        @if (isClient()) {
+            @if (!activeSession()) {
+                <button mat-raised-button color="primary" (click)="startSession()">
+                    Lancer un chat
+                </button>
+            } @else if (canDisplayChatComponent()) {
+                <h3>Session active (ID: {{ activeSession()?.id }})</h3>
+                <app-chat
+                        [sessionId]="activeSession()!.id"
+                        [senderRole]="'CLIENT'"
+                        (chatEnded)="onChatEnded()"
+                ></app-chat>
+            }
         }
-      </mat-list>
-    }
 
-    @if (activeSession()) {
-      <h3>Session active : {{ activeSession()?.id }}</h3>
-      <app-chat [sessionId]="activeSession()!.id" [senderRole]="'SAV'"></app-chat>
-    }
-  }
-</ng-container>
+        @if (isSav()) {
+            <h3>Chats en attente</h3>
+
+            @if (sessions().length > 0) {
+                <mat-list>
+                    @for (session of sessions(); track session.id) {
+                        <mat-list-item>
+                            <span>Session #{{ session.id }}</span>
+                            <button mat-button (click)="takeSession(session.id)">Prendre</button>
+                        </mat-list-item>
+                    }
+                </mat-list>
+            } @else {
+                <p style="font-style: italic; margin-top: 12px;">Aucun chat en attente pour le moment.</p>
+            }
+
+            @if (activeSession() && canDisplayChatComponent()) {
+                <h3>Session active : {{ activeSession()?.id }}</h3>
+                <app-chat
+                        [sessionId]="activeSession()!.id"
+                        [senderRole]="'SAV'"
+                        (chatEnded)="onChatEnded()"
+                ></app-chat>
+            }
+        }
+
+    </ng-container>
+}

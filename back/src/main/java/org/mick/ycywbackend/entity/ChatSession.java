@@ -38,4 +38,8 @@ public class ChatSession {
         this.createdAt = LocalDateTime.now();
         this.status = ChatStatus.WAITING;
     }
+
+    public void close() {
+        this.status = ChatStatus.CLOSED;
+    }
 }

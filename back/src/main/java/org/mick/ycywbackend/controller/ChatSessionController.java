@@ -1,9 +1,10 @@
 package org.mick.ycywbackend.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.mick.ycywbackend.entity.ChatSession;
+import org.mick.ycywbackend.dto.ChatSessionDto;
 import org.mick.ycywbackend.service.ChatSessionService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,37 +15,29 @@ import java.util.List;
 public class ChatSessionController {
 
     private final ChatSessionService chatSessionService;
+    private final SimpMessagingTemplate messagingTemplate;
 
-    /**
-     * Un utilisateur client démarre une nouvelle session
-     */
     @PostMapping
-    public ResponseEntity<ChatSession> createSession() {
-        ChatSession session = chatSessionService.createSession();
-        return ResponseEntity.ok(session);
+    public ResponseEntity<ChatSessionDto> createSession() {
+        messagingTemplate.convertAndSend("/topic/waiting-sessions", "refresh");
+        return ResponseEntity.ok(chatSessionService.createSession());
     }
 
-    /**
-     * L’utilisateur SAV consulte les chats en attente
-     */
     @GetMapping("/waiting")
-    public ResponseEntity<List<ChatSession>> getWaitingSessions() {
+    public ResponseEntity<List<ChatSessionDto>> getWaitingSessions() {
         return ResponseEntity.ok(chatSessionService.getWaitingSessions());
     }
 
-    /**
-     * L’utilisateur SAV prend en charge une session
-     */
     @PostMapping("/{id}/assign")
-    public ResponseEntity<ChatSession> assignToSav(@PathVariable Long id) {
-        return ResponseEntity.ok(chatSessionService.assignToSav(id));
+    public ResponseEntity<ChatSessionDto> assignToSav(@PathVariable Long id) {
+        ChatSessionDto dto = chatSessionService.assignToSav(id);
+        messagingTemplate.convertAndSend("/topic/waiting-sessions", "refresh");
+        return ResponseEntity.ok(dto);
     }
 
-    /**
-     * Optionnel : fermer une session
-     */
+
     @PostMapping("/{id}/close")
-    public ResponseEntity<ChatSession> closeSession(@PathVariable Long id) {
+    public ResponseEntity<ChatSessionDto> closeSession(@PathVariable Long id) {
         return ResponseEntity.ok(chatSessionService.closeSession(id));
     }
 }

@@ -1,7 +1,9 @@
 package org.mick.ycywbackend.service;
 
 import lombok.RequiredArgsConstructor;
+import org.mick.ycywbackend.dto.ChatSessionDto;
 import org.mick.ycywbackend.entity.*;
+import org.mick.ycywbackend.mapper.ChatSessionMapper;
 import org.mick.ycywbackend.repository.ChatSessionRepository;
 import org.mick.ycywbackend.repository.UserRepository;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -15,36 +17,30 @@ public class ChatSessionService {
 
     private final ChatSessionRepository chatSessionRepository;
     private final UserRepository userRepository;
+    private final ChatSessionMapper chatSessionMapper;
 
-    // Récupère l'utilisateur connecté
     private User getCurrentUser() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         return userRepository.findByEmail(email).orElseThrow();
     }
 
-    /**
-     * Crée une session de chat pour l'utilisateur connecté (client)
-     */
-    public ChatSession createSession() {
+    public ChatSessionDto createSession() {
         User current = getCurrentUser();
 
         ChatSession session = new ChatSession();
         session.setClient(current);
-        // status + createdAt sont gérés par @PrePersist
-        return chatSessionRepository.save(session);
+
+        return chatSessionMapper.toDto(chatSessionRepository.save(session));
     }
 
-    /**
-     * Récupère toutes les sessions en attente
-     */
-    public List<ChatSession> getWaitingSessions() {
-        return chatSessionRepository.findByStatus(ChatStatus.WAITING);
+    public List<ChatSessionDto> getWaitingSessions() {
+        return chatSessionRepository.findByStatus(ChatStatus.WAITING)
+                .stream()
+                .map(chatSessionMapper::toDto)
+                .toList();
     }
 
-    /**
-     * Le SAV prend en charge une session
-     */
-    public ChatSession assignToSav(Long sessionId) {
+    public ChatSessionDto assignToSav(Long sessionId) {
         User current = getCurrentUser();
 
         if (current.getRole() != Role.SAV) {
@@ -61,16 +57,13 @@ public class ChatSessionService {
         session.setSavUser(current);
         session.setStatus(ChatStatus.IN_PROGRESS);
 
-        return chatSessionRepository.save(session);
+        return chatSessionMapper.toDto(chatSessionRepository.save(session));
     }
 
-    /**
-     * Ferme une session (optionnel)
-     */
-    public ChatSession closeSession(Long sessionId) {
+    public ChatSessionDto closeSession(Long sessionId) {
         ChatSession session = chatSessionRepository.findById(sessionId)
                 .orElseThrow(() -> new RuntimeException("Session not found"));
         session.setStatus(ChatStatus.CLOSED);
-        return chatSessionRepository.save(session);
+        return chatSessionMapper.toDto(chatSessionRepository.save(session));
     }
 }

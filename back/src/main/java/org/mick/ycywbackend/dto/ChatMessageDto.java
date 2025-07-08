@@ -1,13 +1,11 @@
 package org.mick.ycywbackend.dto;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.mick.ycywbackend.entity.MessageType;
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class ChatMessageDto {
 
     private String content;

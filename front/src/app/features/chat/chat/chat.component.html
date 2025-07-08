@@ -1,15 +1,25 @@
 <div class="chat-container">
-  <div class="chat-messages">
-    @for (msg of messages(); track $index) {
-      <div class="message">{{ msg }}</div>
+    <div class="chat-messages">
+        @for (msg of messages(); track $index) {
+            <div class="message"><strong>{{ msg.sender }}:</strong> {{ msg.content }}</div>
+        }
+    </div>
+
+    @if (ended()) {
+        <div style="text-align: center; margin-top: 16px;">
+            <mat-icon color="warn">check_circle</mat-icon>
+            <p style="margin: 8px 0;">Le chat est terminé.</p>
+        </div>
     }
-  </div>
 
-  <form (ngSubmit)="send()" class="chat-form">
-    <mat-form-field class="full-width">
-      <input matInput [(ngModel)]="message" name="message" placeholder="Tapez votre message..." required />
-    </mat-form-field>
-    <button mat-raised-button color="primary" type="submit">Envoyer</button>
-  </form>
+    <form (ngSubmit)="send()" class="chat-form">
+        <mat-form-field class="full-width">
+            <input matInput [(ngModel)]="message" name="message" placeholder="Tapez votre message..." required [disabled]="ended()" />
+        </mat-form-field>
+        <button mat-raised-button color="primary" type="submit" [disabled]="ended()">Envoyer</button>
+    </form>
 
+    <div class="chat-actions" style="text-align: center; margin-top: 16px;">
+        <button mat-stroked-button color="warn" (click)="terminateChat()" [disabled]="ended()">Terminer le chat</button>
+    </div>
 </div>
