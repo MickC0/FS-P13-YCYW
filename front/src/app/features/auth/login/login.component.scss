@@ -1,0 +1,39 @@
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 80vh;
+}
+
+mat-card {
+  width: 100%;
+  max-width: 400px;
+  padding: 2rem;
+  gap: 2rem;
+}
+
+mat-card-header {
+  justify-content: center;
+}
+
+.form-field {
+  margin-bottom: 1.5rem;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.return-button {
+  align-self: flex-start;
+  margin-bottom: 1rem;
+}
+
+.actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
+  gap: 1rem;
+}
+

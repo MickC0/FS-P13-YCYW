@@ -3,7 +3,7 @@ import {MATERIAL_IMPORTS} from '../../shared/material';
 import {RouterLink, RouterOutlet} from '@angular/router';
 
 @Component({
-  selector: 'app-main-layout.component',
+  selector: 'app-main-layout',
   imports: [
     ...MATERIAL_IMPORTS,
     RouterOutlet,
